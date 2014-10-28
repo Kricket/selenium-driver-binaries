@@ -1,0 +1,106 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>fr.fot.selenium</groupId>
+		<artifactId>selenium-driver-binaries</artifactId>
+		<version>0.0.1</version>
+	</parent>
+	<artifactId>selenium-chromedriver-binary</artifactId>
+	<packaging>pom</packaging>
+	<name>Binary driver for Google Chrome</name>
+	<version>2.11</version>
+
+	<properties>
+		<chromedriver.base.url>http://chromedriver.storage.googleapis.com</chromedriver.base.url>
+		<chromedriver.win32>chromedriver_win32.zip</chromedriver.win32>
+		<chromedriver.mac32>chromedriver_mac32.zip</chromedriver.mac32>
+		<chromedriver.linux32>chromedriver_linux32.zip</chromedriver.linux32>
+		<chromedriver.linux64>chromedriver_linux64.zip</chromedriver.linux64>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>Download chromedriver binaries</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<echo message="Downloading drivers from ${chromedriver.base.url}..." />
+								<get
+									src="${chromedriver.base.url}/${project.version}/${chromedriver.win32}"
+									dest="${project.build.directory}" />
+								<get
+									src="${chromedriver.base.url}/${project.version}/${chromedriver.mac32}"
+									dest="${project.build.directory}" />
+								<get
+									src="${chromedriver.base.url}/${project.version}/${chromedriver.linux32}"
+									dest="${project.build.directory}" />
+								<get
+									src="${chromedriver.base.url}/${project.version}/${chromedriver.linux64}"
+									dest="${project.build.directory}" />
+
+								<echo message="Unzipping drivers..." />
+								<unzip src="${project.build.directory}/${chromedriver.win32}"
+									dest="${project.build.directory}/win32" />
+								<unzip src="${project.build.directory}/${chromedriver.mac32}"
+									dest="${project.build.directory}/mac32" />
+								<unzip src="${project.build.directory}/${chromedriver.linux32}"
+									dest="${project.build.directory}/linux32" />
+								<unzip src="${project.build.directory}/${chromedriver.linux64}"
+									dest="${project.build.directory}/linux64" />
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.9.1</version>
+				<executions>
+					<execution>
+						<id>Attach the downloaded binaries</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<file>${project.build.directory}/win32/chromedriver.exe</file>
+									<classifier>win32</classifier>
+									<type>exe</type>
+								</artifact>
+								<artifact>
+									<file>${project.build.directory}/mac32/chromedriver</file>
+									<classifier>mac32</classifier>
+									<type>exe</type>
+								</artifact>
+								<artifact>
+									<file>${project.build.directory}/linux32/chromedriver</file>
+									<classifier>linux32</classifier>
+									<type>exe</type>
+								</artifact>
+								<artifact>
+									<file>${project.build.directory}/linux64/chromedriver</file>
+									<classifier>linux64</classifier>
+									<type>exe</type>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
